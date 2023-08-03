@@ -5,7 +5,7 @@ const fs = require('fs');
     valida que la ruta sea valida
 |--------------------------------------------------------------------------
 */
-exports.validarPath =function validarPath (dirname){
+function validarPath (dirname){
     return (fs.existsSync(dirname)) ? true : false;
 }
 /*
@@ -13,7 +13,7 @@ exports.validarPath =function validarPath (dirname){
     valida que la ruta sea absoluta
 |--------------------------------------------------------------------------
 */
-exports.validarRuta =function validarRuta (dirname){
+function validarRuta (dirname){
     return (path.isAbsolute(dirname));
 }
 /*
@@ -21,7 +21,7 @@ exports.validarRuta =function validarRuta (dirname){
     traduce la ruta a absoluta
 |--------------------------------------------------------------------------
 */
-exports.transAbsoluta =function transAbsoluta (dirname){
+function transAbsoluta (dirname){
     return (path.resolve(dirname));
 }
 /*
@@ -29,7 +29,7 @@ exports.transAbsoluta =function transAbsoluta (dirname){
     obtiene la extesion del archivo 
 |--------------------------------------------------------------------------
 */
-exports.tipoExt =function tipoExt (dirname){
+function tipoExt (dirname){
     return (path.extname(dirname));
 }
 /*
@@ -37,7 +37,7 @@ exports.tipoExt =function tipoExt (dirname){
     recorrer directorio 
 |--------------------------------------------------------------------------
 */
-exports.buscarArchivo =function buscarArchivo (dirname){
+function buscarArchivo (dirname){
     return (fs.readdirSync(dirname));
 }
 /*
@@ -45,7 +45,7 @@ exports.buscarArchivo =function buscarArchivo (dirname){
   buscar un archivo .MD
 |--------------------------------------------------------------------------
 */
-exports.archivoMD =function archivoMD (dirname){
+function archivoMD (dirname){
     return (path.extname(dirname) === ".md");
 }
 /*
@@ -53,7 +53,25 @@ exports.archivoMD =function archivoMD (dirname){
   leer archivo
 |--------------------------------------------------------------------------
 */
-exports.leerArchivo =function leerArchivo (file){
-    return fs.readFile(file, 'utf8', function(err, data){
-    });
+function leerArchivo (file){
+    return new Promise ((reject, resolve)=>{
+        fs.readFile(file,'utf-8', function(err, data){ 
+            if(err) { 
+                reject(console.log("There is an Error!"));
+               
+            }else{ 
+                resolve(data);
+            }
+        })
+    })
 }
+
+
+module.exports = { validarPath,
+    validarRuta,
+    transAbsoluta,
+    tipoExt,
+    buscarArchivo,
+    archivoMD,
+    leerArchivo,
+};
