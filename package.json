@@ -11,7 +11,7 @@
   },
   "scripts": {
     "test": "jest --coverage",
-    "start": "node ./pruebas.js"
+    "start": "node ./index.js"
   },
   "devDependencies": {
     "jest": "^29.6.1"
