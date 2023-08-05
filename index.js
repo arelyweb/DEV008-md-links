@@ -9,28 +9,33 @@ const mdLinks = (path,option) =>{
             const rutaValida = (main.validarRuta(path))? argv : main.transAbsoluta(path);
             const extArchivo = main.tipoExt(rutaValida);
             if(extArchivo){
-                resolve({
-                    error: false,
-                    value:  console.log(main.leerArchivo(rutaValida)),
-                  });    
+                const regex = /(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])/igm;
+                const contenidoArchivo = main.leerArchivo(rutaValida);
+                const arrayLinks = contenidoArchivo.match(regex);   
+                
+                if(arrayLinks){
+                    resolve(arrayLinks);    
+                }else{
+                    reject(pc.red("MSG: La ruta no contiene Links."));
+                }
+                
+              
             }else{
                 try{
                     const data = main.buscarArchivo(rutaValida);
                     const resultArray = data.filter(word => main.archivoMD(word));
                     if (resultArray.length === 0) { 
-                        console.log(pc.red("MSG: No exiten archivos compatibles.")) 
-                        reject(new Error('Something is not right!'));
+                        reject(pc.red("MSG: No exiten archivos compatibles."));
                     }else{
                         recorreArray(rutaValida,resultArray, resultArray.length-1);
                     }
                   
                   } catch (err) {
-                    console.error(err);
+                    reject(pc.red(err)); 
                   }      
             } 
         }else{
-            console.log(pc.red('MSG: Ruta Inválida'));
-            reject(new Error('Something is not right!')); 
+            reject(pc.red('MSG: Ruta Inválida')); 
         };
     })
 }
@@ -38,8 +43,12 @@ module.exports = () => {
     mdLinks;
   };
 
-  mdLinks('..\\DEV008-social-network\\README.md')
+  mdLinks('..\\DEV008-card-validation\\README.md')
     .then(links => {
+        console.log(links);
         // => [{ href, text, file }, ...]
       })
-      .catch(console.error);
+      .catch(err => { console.log(err) });
+
+      //DEV008-card-validation
+      //DEV008-data-lovers
