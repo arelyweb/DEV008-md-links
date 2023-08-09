@@ -1,5 +1,7 @@
 const path = require('path');
 const fs = require('fs');
+
+const regex = /(?=\[(!\[.+?\]\(.+?\)|.+?)]\(((?:https?|ftp|file):\/\/[^\)]+)\))/gi;
 /*
 |--------------------------------------------------------------------------
     valida que la ruta sea valida
@@ -13,7 +15,7 @@ function validarPath (dirname){
     valida que la ruta sea absoluta
 |--------------------------------------------------------------------------
 */
-function validarRuta (dirname){
+function validarRutaAbsoluta (dirname){
     return (path.isAbsolute(dirname));
 }
 /*
@@ -65,16 +67,39 @@ function archivoMD (dirname){
 // }
 
 function leerArchivo (file){
-    return  fs.readFileSync(file,'utf8')
-        
+    return  fs.readFileSync(file,{encoding:'utf-8'})      
+}
+/*
+|--------------------------------------------------------------------------
+    busca links y crea un array de objetos
+|--------------------------------------------------------------------------
+*/
+function arrayLinks (stringArchivo,rutaValida){
+ return [...stringArchivo.matchAll(regex)].map((m) => ({ href: m[2],text: m[1], file: rutaValida}))
+  }
+/*
+|--------------------------------------------------------------------------
+    recorre directorio de manera recursiva
+|--------------------------------------------------------------------------
+*/
+  function recorreArray(rutaValida,arrayArchivos,n,resultado){
+    //console.trace(array[n]);
+    if (n===0){
+        resultado.push(resultado+(leerArchivo(rutaValida+'\\'+ arrayArchivos[n])))  
+        return resultado;
+    } else {
+        resultado.push(resultado+(leerArchivo(rutaValida+'\\'+ arrayArchivos[n])))  
+        return recorreArray(rutaValida,arrayArchivos,n-1,resultado);
+    }
 }
 
-
 module.exports = { validarPath,
-    validarRuta,
+    validarRutaAbsoluta,
     transAbsoluta,
     tipoExt,
     buscarArchivo,
     archivoMD,
     leerArchivo,
+    arrayLinks,
+    recorreArray,
 };

@@ -1,35 +1,62 @@
 //aqui debo de importar las funciones q tengo en main.js
 const main = require('./main');
 const pc = require('picocolors');
+const axios = require('axios').default;
+
+
+let arrayFinal;
+
+
 
 const mdLinks = (path,option) =>{
     return new Promise((resolve,reject)=>{
-        
         if(main.validarPath(path)){//validamos la ruta 
-            const rutaValida = (main.validarRuta(path))? argv : main.transAbsoluta(path);
+            const rutaValida = (main.validarRutaAbsoluta(path))? path : main.transAbsoluta(path);
             const extArchivo = main.tipoExt(rutaValida);
             if(extArchivo){
-                const regex = /(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])/igm;
-                const contenidoArchivo = main.leerArchivo(rutaValida);
-                const arrayLinks = contenidoArchivo.match(regex);   
-                
-                if(arrayLinks){
-                    resolve(arrayLinks);    
-                }else{
-                    reject(pc.red("MSG: La ruta no contiene Links."));
+              const contenidoArchivo = main.leerArchivo(rutaValida);
+              const  arrayLinks = main.arrayLinks(contenidoArchivo,rutaValida)
+                if(option && option.validate === true){
+                    arrayFinal = arrayLinks.map((element) =>
+                    axios
+                      .get(element.href)
+                      .then((response) => {
+                        element.status = response.status;
+                        element.ok = response.statusText;
+                        return element;
+                      })
+                      .catch((error) => {
+                        element.status = error.response;
+                        element.ok = "error";
+                        return element;
+                      })
+                  );
+
+                  Promise.all(arrayFinal)
+                    .then((updatedLinks) => {
+                      resolve(updatedLinks);
+                    })
+                    .catch(err =>{
+                      reject(pc.red("MSG: La ruta no contiene Links, "+ err.response));
+                    })
+
+                }else {
+                  resolve(arrayLinks);
                 }
-                
-              
+
             }else{
                 try{
                     const data = main.buscarArchivo(rutaValida);
-                    const resultArray = data.filter(word => main.archivoMD(word));
-                    if (resultArray.length === 0) { 
+                    const arrayArchivos = data.filter(word => main.archivoMD(word));
+                    if (arrayArchivos.length === 0) { 
                         reject(pc.red("MSG: No exiten archivos compatibles."));
                     }else{
-                        recorreArray(rutaValida,resultArray, resultArray.length-1);
-                    }
-                  
+                        const linksArchivo = main.recorreArray(rutaValida,arrayArchivos, arrayArchivos.length-1,[]).map((element) =>main.arrayLinks(element,rutaValida) );
+                      
+                   
+                        resolve(linksArchivo);
+                      
+                    }                 
                   } catch (err) {
                     reject(pc.red(err)); 
                   }      
@@ -43,7 +70,8 @@ module.exports = () => {
     mdLinks;
   };
 
-  mdLinks('..\\DEV008-card-validation\\README.md')
+
+mdLinks('..\\DEV008-data-lovers\\')
     .then(links => {
         console.log(links);
         // => [{ href, text, file }, ...]
@@ -52,3 +80,5 @@ module.exports = () => {
 
       //DEV008-card-validation
       //DEV008-data-lovers
+      //DEV008-md-links
+      //, { validate: true }
