@@ -55,17 +55,6 @@ function archivoMD (dirname){
   leer archivo
 |--------------------------------------------------------------------------
 */
-// function leerArchivo (file){
-//     return new Promise ((reject, resolve)=>{
-//         fs.readFile(file,'utf-8', function(error, path){ 
-//             if (error) throw error;
-//                 fs.readFile(file,'utf-8', function(err, data){ 
-//                     console.log(data);
-//                 });
-//         })
-//     })
-// }
-
 function leerArchivo (file){
     return  fs.readFileSync(file,{encoding:'utf-8'})      
 }

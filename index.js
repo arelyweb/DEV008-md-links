@@ -4,7 +4,7 @@ const pc = require('picocolors');
 const axios = require('axios').default;
 
 
-let arrayFinal;
+let arrayFinal, arrayFinalArchivo;
 
 
 
@@ -53,8 +53,36 @@ const mdLinks = (path,option) =>{
                     }else{
                         const linksArchivo = main.recorreArray(rutaValida,arrayArchivos, arrayArchivos.length-1,[]).map((element) =>main.arrayLinks(element,rutaValida) );
                       
-                   
+                        if(option && option.validate === true){
+                          arrayFinalArchivo = linksArchivo.map(element =>{
+                            return element.map(item =>
+                            axios
+                            .get(item.href)
+                            .then((response) => {
+                              item.status = response.status;
+                              item.ok = response.statusText;
+                              return item;
+                            })
+                            .catch((error) => {
+                              item.status = error.response.statusText;
+                              item.ok = "error";
+                              return item;
+                            })
+                          )
+                          });
+                          arrayFinalArchivo.forEach(element => {
+                            Promise.all(element)
+                            .then((updatedLinks) => {
+                              resolve(updatedLinks);
+                            })
+                            .catch(err =>{
+                              reject(pc.red("MSG: La ruta no contiene Links, "));
+                            })
+                          });
+                        
+                      }else {
                         resolve(linksArchivo);
+                      }
                       
                     }                 
                   } catch (err) {
@@ -71,7 +99,7 @@ module.exports = () => {
   };
 
 
-mdLinks('..\\DEV008-data-lovers\\')
+mdLinks('..\\DEV008-data-lovers', { validate: true })
     .then(links => {
         console.log(links);
         // => [{ href, text, file }, ...]
