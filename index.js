@@ -12,7 +12,7 @@ const mdLinks = (path,option) =>{
     return new Promise((resolve,reject)=>{
         if(main.validarPath(path)){//validamos la ruta 
             const rutaValida = (main.validarRutaAbsoluta(path))? path : main.transAbsoluta(path);
-            const extArchivo = main.tipoExt(rutaValida);
+            const extArchivo = main.archivoMD(rutaValida);
             if(extArchivo){
               const contenidoArchivo = main.leerArchivo(rutaValida);
               const  arrayLinks = main.arrayLinks(contenidoArchivo,rutaValida)
@@ -76,7 +76,7 @@ const mdLinks = (path,option) =>{
                               resolve(updatedLinks);
                             })
                             .catch(err =>{
-                              reject(pc.red("MSG: La ruta no contiene Links, "));
+                              reject(pc.red("MSG: "+err));
                             })
                           });
                         
@@ -85,8 +85,8 @@ const mdLinks = (path,option) =>{
                       }
                       
                     }                 
-                  } catch (err) {
-                    reject(pc.red(err)); 
+                  } catch  {
+                    reject(pc.red('MSG: No corresponde a un archivo válido')); 
                   }      
             } 
         }else{
@@ -99,7 +99,7 @@ module.exports = () => {
   };
 
 
-mdLinks('..\\DEV008-data-lovers', { validate: true })
+mdLinks('..\\DEV008-data-lovers\\', { validate: true })
     .then(links => {
         console.log(links);
         // => [{ href, text, file }, ...]

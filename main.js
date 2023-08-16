@@ -4,7 +4,7 @@ const fs = require('fs');
 const regex = /(?=\[(!\[.+?\]\(.+?\)|.+?)]\(((?:https?|ftp|file):\/\/[^\)]+)\))/gi;
 /*
 |--------------------------------------------------------------------------
-    valida que la ruta sea valida
+    valida que la ruta exista
 |--------------------------------------------------------------------------
 */
 function validarPath (dirname){
@@ -24,15 +24,23 @@ function validarRutaAbsoluta (dirname){
 |--------------------------------------------------------------------------
 */
 function transAbsoluta (dirname){
-    return (path.resolve(dirname));
+        return (path.resolve(dirname));
 }
 /*
 |--------------------------------------------------------------------------
     obtiene la extesion del archivo 
 |--------------------------------------------------------------------------
 */
-function tipoExt (dirname){
-    return (path.extname(dirname));
+// function tipoExt (dirname){
+//     return (path.extname(dirname));
+// }
+/*
+|--------------------------------------------------------------------------
+  buscar un archivo .MD
+|--------------------------------------------------------------------------
+*/
+function archivoMD (dirname){
+    return (path.extname(dirname) === ".md");
 }
 /*
 |--------------------------------------------------------------------------
@@ -42,14 +50,7 @@ function tipoExt (dirname){
 function buscarArchivo (dirname){
     return (fs.readdirSync(dirname));
 }
-/*
-|--------------------------------------------------------------------------
-  buscar un archivo .MD
-|--------------------------------------------------------------------------
-*/
-function archivoMD (dirname){
-    return (path.extname(dirname) === ".md");
-}
+
 /*
 |--------------------------------------------------------------------------
   leer archivo
@@ -85,7 +86,6 @@ function arrayLinks (stringArchivo,rutaValida){
 module.exports = { validarPath,
     validarRutaAbsoluta,
     transAbsoluta,
-    tipoExt,
     buscarArchivo,
     archivoMD,
     leerArchivo,
