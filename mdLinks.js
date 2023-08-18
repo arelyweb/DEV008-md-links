@@ -1,7 +1,7 @@
 //aqui debo de importar las funciones q tengo en main.js
 const main = require('./main');
 const pc = require('picocolors');
-const axios = require('axios').default;
+
 
 
 let arrayFinal, arrayFinalArchivo;
@@ -17,21 +17,7 @@ const mdLinks = (path,option) =>{
               const contenidoArchivo = main.leerArchivo(rutaValida);
               const  arrayLinks = main.arrayLinks(contenidoArchivo,rutaValida)
                 if(option && option.validate === true){
-                    arrayFinal = arrayLinks.map((element) =>
-                    axios
-                      .get(element.href)
-                      .then((response) => {
-                        element.status = response.status;
-                        element.ok = response.statusText;
-                        return element;
-                      })
-                      .catch((error) => {
-                        element.status = error.response;
-                        element.ok = "error";
-                        return element;
-                      })
-                  );
-
+                    arrayFinal = arrayLinks.map((element) =>main.axiosProm(element));
                   Promise.all(arrayFinal)
                     .then((updatedLinks) => {
                       resolve(updatedLinks);
@@ -55,20 +41,7 @@ const mdLinks = (path,option) =>{
                       
                         if(option && option.validate === true){
                           arrayFinalArchivo = linksArchivo.map(element =>{
-                            return element.map(item =>
-                            axios
-                            .get(item.href)
-                            .then((response) => {
-                              item.status = response.status;
-                              item.ok = response.statusText;
-                              return item;
-                            })
-                            .catch((error) => {
-                              item.status = error.response.statusText;
-                              item.ok = "error";
-                              return item;
-                            })
-                          )
+                            return element.map(item =>main.axiosProm(item));
                           });
                           arrayFinalArchivo.forEach(element => {
                             Promise.all(element)
@@ -99,12 +72,12 @@ module.exports = () => {
   };
 
 
-mdLinks('..\\DEV008-data-lovers\\', { validate: true })
-    .then(links => {
-        console.log(links);
-        // => [{ href, text, file }, ...]
-      })
-      .catch(err => { console.log(err) });
+// mdLinks('..\\DEV008-data-lovers\\README.md', { validate: true })
+//     .then(links => {
+//         console.log(links);
+//         // => [{ href, text, file }, ...]
+//       })
+//       .catch(err => { console.log(err) });
 
       //DEV008-card-validation
       //DEV008-data-lovers

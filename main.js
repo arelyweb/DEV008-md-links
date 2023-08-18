@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const axios = require('axios').default;
 
 const regex = /(?=\[(!\[.+?\]\(.+?\)|.+?)]\(((?:https?|ftp|file):\/\/[^\)]+)\))/gi;
 /*
@@ -67,6 +68,25 @@ function leerArchivo (file){
 function arrayLinks (stringArchivo,rutaValida){
  return [...stringArchivo.matchAll(regex)].map((m) => ({ href: m[2],text: m[1], file: rutaValida}))
   }
+  /*
+|--------------------------------------------------------------------------
+    axios
+|--------------------------------------------------------------------------
+*/
+function axiosProm(element){
+    return axios
+    .get(element.href)
+    .then((response) => {
+      element.status = response.status;
+      element.ok = response.statusText;
+      return element;
+    })
+    .catch((error) => {
+      element.status = error.response;
+      element.ok = "error";
+      return element;
+    })
+}
 /*
 |--------------------------------------------------------------------------
     recorre directorio de manera recursiva
@@ -83,6 +103,13 @@ function arrayLinks (stringArchivo,rutaValida){
     }
 }
 
+/*
+|--------------------------------------------------------------------------
+   conteo de links
+|--------------------------------------------------------------------------
+*/
+
+
 module.exports = { validarPath,
     validarRutaAbsoluta,
     transAbsoluta,
@@ -90,5 +117,6 @@ module.exports = { validarPath,
     archivoMD,
     leerArchivo,
     arrayLinks,
+    axiosProm,
     recorreArray,
 };

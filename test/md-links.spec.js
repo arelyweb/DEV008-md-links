@@ -10,12 +10,12 @@ const main = require('../main');
 describe('validar que exista Path', () => {
 
   it('deberia de retornar verdadero cuando la ruta existe.', () => {
-    const Path = '..\\DEV008-data-lovers\\README.md';
+    const Path = 'test\\test-links1\\MK1.md';
         const result = main.validarPath(Path);
         expect(result).toBe(true);
   });
   it('deberia de retornar falso cuando la ruta no existe.', () => {
-    const Path = '..\\DEV008-data-lovs\\README.md';
+    const Path = '\\test-linxks1\\MK1.md';
     const result = main.validarPath(Path);
     expect(result).toBe(false);
   });
@@ -27,12 +27,12 @@ describe('validar que exista Path', () => {
 */
 describe('validar si la es ruta es absoluta', () => {
   it('deberia de retornar verdadero si la ruta es absoluta.', () => {
-    const Path = 'C:\\Users\\GILBERTO BULNES\\Documents\\LABORATORIA\\proyectos\\DEV008-social-network\\README.md';
+    const Path = 'C:\\Users\\GILBERTO BULNES\\Documents\\LABORATORIA\\proyectos\\DEV008-md-links\\test\\test-links1\\MK1.md';
     const result = main.validarRutaAbsoluta(Path);
     expect(result).toBe(true);
   });
   it('deberia de retornar falso si la ruta no es absoluta.', () => {
-    const Path = '..\\DEV008-data-lovs\\README.md';
+    const Path = 'test\\test-links1\\MK1.md';
     const result = main.validarRutaAbsoluta(Path);
     expect(result).toBe(false);
   });
@@ -44,9 +44,9 @@ describe('validar si la es ruta es absoluta', () => {
 */
 describe(' traduce la ruta a absoluta', () => {
   it('deberia de traducir una ruta relativa a ruta absoluta.', () => {
-    const Path = '..\\DEV008-data-lovers\\README.md';
+    const Path = 'test\\test-links1\\MK1.md';
     const result = main.transAbsoluta(Path);
-    expect(result).toBe('C:\\Users\\GILBERTO BULNES\\Documents\\LABORATORIA\\proyectos\\DEV008-data-lovers\\README.md');
+    expect(result).toBe('C:\\Users\\GILBERTO BULNES\\Documents\\LABORATORIA\\proyectos\\DEV008-md-links\\test\\test-links1\\MK1.md');
   });
 });
 /*
@@ -56,12 +56,12 @@ describe(' traduce la ruta a absoluta', () => {
 */
 describe('archivoMD', () => {
   it('deberia de retornar verdadero si existe archivo .md.', () => {
-    const Path = '..\\DEV008-data-lovers\\README.md';
+    const Path = 'test\\test-links1\\MK1.md';
     const result = main.archivoMD(Path);
     expect(result).toBe(true);
   });
-  it('deberia de retornar falso si existe archivo .md.', () => {
-    const Path = '..\\DEV008-data-lovers\\package.json';
+  it('deberia de retornar falso sino existe archivo .md.', () => {
+    const Path = 'test\\test-links1\\packagse.json';
     const result = main.archivoMD(Path);
     expect(result).toBe(false);
   });
@@ -73,13 +73,13 @@ describe('archivoMD', () => {
 */
 describe('buscarArchivo', () => {
   it('deberia retornar un array de archivos dentro del directorio.', () => {
-    const Path = '..\\DEV008-data-loves\\';
-    const files = ['eslintignore', 'EXTRA.md', 'img', 'package.json'];
+    const Path = 'test\\test-links2';
+    const archivos = ['MK2.md', 'MK3.md'];
  
-    jest.spyOn(fs, 'readdirSync').mockReturnValue(files);
+    jest.spyOn(fs, 'readdirSync').mockReturnValue(archivos);
     const result = main.buscarArchivo(Path);
 
-    expect(result).toStrictEqual(files);
+    expect(result).toStrictEqual(archivos);
     fs.readdirSync.mockRestore();
   });
 });
@@ -90,13 +90,14 @@ describe('buscarArchivo', () => {
 */
 describe('leerArchivo', () => {
   it('deberia de leer el contenido del archivo.', () => {
-    const Path = '..\\DEV008-data-loves\\read-1.md';
-    const FileContent = '###Contendio del archivo .md';
+    const Path = 'test\\test-links1\\MK1.md';
+    const archivoContenido = '###Contendio del archivo .md';
     jest.spyOn(fs, 'readFileSync').mockReturnValue(
-      FileContent
+      archivoContenido
     );
     const result = main.leerArchivo(Path);
-    expect(result).toEqual(FileContent);
+
+    expect(result).toEqual(archivoContenido);
   });
 });
 /*
@@ -104,16 +105,35 @@ describe('leerArchivo', () => {
     busca links y crea un array de objetos
 |--------------------------------------------------------------------------
 */
-// describe('validarPath', () => {
-//   it('deberia de validar que la ruta exista.', () => {
-//   });
-// });
+ describe('arrayLinks', () => {
+  it('deberia realizar el conteo de links.', () => {
+    jest.resetAllMocks();
+
+  const Path = 'test\\test-links1\\MK1.md';
+  
+  const mdText = fs.readFileSync(Path, {encoding:'utf-8'});
+  const result = main.arrayLinks(mdText,Path);
+  expect(result.length).toEqual(1);
+  });
+});
 /*
 |--------------------------------------------------------------------------
-    traduce la ruta en absoluta
+    recorre directorio de manera recursiva
 |--------------------------------------------------------------------------
 */
-// describe('validarPath', () => {
-//   it('deberia de validar que la ruta exista.', () => {
-//   });
-// });
+describe('recorreArray', () => {
+  it('deberia recorrer el array de archivos .md del dorectorio de forma recursiva.', () => {
+    jest.resetAllMocks();
+
+    const Path = 'test\\test-links2\\';
+    const archivos = ['MK2.md', 'MK3.md'];
+    
+    jest.spyOn(fs, 'readdirSync').mockReturnValue(archivos);
+
+    const result = main.recorreArray(Path,archivos, archivos.length-1,[])
+    console.log(result)
+    //expect(result).toEqual(archivos);
+
+  });
+
+});
