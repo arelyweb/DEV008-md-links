@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const axios = require('axios').default;
+const pc = require('picocolors');
 
 const regex = /(?=\[(!\[.+?\]\(.+?\)|.+?)]\(((?:https?|ftp|file):\/\/[^\)]+)\))/gi;
 /*
@@ -105,9 +106,36 @@ function axiosProm(element){
 
 /*
 |--------------------------------------------------------------------------
-   conteo de links
+   conteo de links totales y unicos
 |--------------------------------------------------------------------------
 */
+function obtieneStats (arrayLinks){
+    const totalLinks = arrayLinks.length;
+    // Set permite almacenar valores únicos de cualquier tipo
+    const uniqueLinks = [...new Set(arrayLinks.map((link) => link.href))];
+    const statsLinks = `
+    Total: ${pc.green(totalLinks)} 
+    Uniques: ${pc.blue(uniqueLinks.length)}`;
+
+    return statsLinks;
+}
+
+/*
+|--------------------------------------------------------------------------
+   conteo de links totales,unicos y rotos
+|--------------------------------------------------------------------------
+*/
+function obtieneValidateStats (arrayLinks){
+    const totalLinks = arrayLinks.length;
+    const uniqueLinks = [...new Set(arrayLinks.map((link) => link.href))];
+    const oks = arrayLinks.filter((word) => word.ok !== 'OK');
+    const statsLinks = `
+    Total: ${pc.green(totalLinks)} 
+    Uniques: ${pc.blue(uniqueLinks.length)}
+    Broken: ${pc.red(oks.length)}`;
+
+    return statsLinks;
+}
 
 
 module.exports = { validarPath,
@@ -119,4 +147,6 @@ module.exports = { validarPath,
     arrayLinks,
     axiosProm,
     recorreArray,
+    obtieneStats,
+    obtieneValidateStats,
 };

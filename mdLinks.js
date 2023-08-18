@@ -2,13 +2,9 @@
 const main = require('./main');
 const pc = require('picocolors');
 
-
-
 let arrayFinal, arrayFinalArchivo;
 
-
-
-const mdLinks = (path,option) =>{
+const mdLinks =  (path,option) =>{
     return new Promise((resolve,reject)=>{
         if(main.validarPath(path)){//validamos la ruta 
             const rutaValida = (main.validarRutaAbsoluta(path))? path : main.transAbsoluta(path);
@@ -67,17 +63,9 @@ const mdLinks = (path,option) =>{
         };
     })
 }
-module.exports = () => {
-    mdLinks;
-  };
+module.exports =mdLinks;
 
 
-// mdLinks('..\\DEV008-data-lovers\\README.md', { validate: true })
-//     .then(links => {
-//         console.log(links);
-//         // => [{ href, text, file }, ...]
-//       })
-//       .catch(err => { console.log(err) });
 
       //DEV008-card-validation
       //DEV008-data-lovers
