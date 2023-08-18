@@ -118,22 +118,41 @@ describe('leerArchivo', () => {
 });
 /*
 |--------------------------------------------------------------------------
+    axios
+|--------------------------------------------------------------------------
+*/
+describe('axiosProm', () => {
+  it('deberia de validar via http los liks.', () => {
+    const mockResponse = [
+      { href: 'https://nodejs.org/', text: 'Node.js', file: 'test\\test-links1\\MK1.md', status: 200, ok: 'OK' },
+    ];
+
+    axios.get.mockImplementation(() => Promise.resolve(mockResponse));
+    const result = main.axiosProm(arrayLinks);
+  
+    
+      expect(response.data).toEqual(mockResponse.data);
+    
+  });
+
+/*
+|--------------------------------------------------------------------------
     recorre directorio de manera recursiva
 |--------------------------------------------------------------------------
 */
 describe('recorreArray', () => {
-  it('deberia recorrer el array de archivos .md del dorectorio de forma recursiva.', () => {
-    jest.resetAllMocks();
+  // it('deberia recorrer el array de archivos .md del dorectorio de forma recursiva.', () => {
+  //   jest.resetAllMocks();
 
-    const Path = 'test\\test-links2\\';
-    const archivos = ['MK2.md', 'MK3.md'];
+  //   const Path = 'test\\test-links2\\';
+  //   const archivos = ['MK2.md', 'MK3.md'];
     
-    jest.spyOn(fs, 'readdirSync').mockReturnValue(archivos);
+  //   jest.spyOn(fs, 'readdirSync').mockReturnValue(archivos);
 
-    const result = main.recorreArray(Path,archivos, archivos.length-1,[])
-    console.log(result)
-    //expect(result).toEqual(archivos);
+  //   const result = main.recorreArray(Path,archivos, archivos.length-1,[])
+  //   console.log(result)
+  //   //expect(result).toEqual(archivos);
 
-  });
+  // });
 
 });

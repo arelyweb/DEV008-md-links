@@ -74,19 +74,23 @@ function arrayLinks (stringArchivo,rutaValida){
     axios
 |--------------------------------------------------------------------------
 */
-function axiosProm(element){
-    return axios
-    .get(element.href)
+function axiosProm(arrayLin){
+    const arrayFinal = arrayLin.map((elem) =>
+    axios
+    .get(elem.href)
     .then((response) => {
-      element.status = response.status;
-      element.ok = response.statusText;
-      return element;
+        elem.status = response.status;
+        elem.ok = response.statusText;
+      return elem;
     })
     .catch((error) => {
-      element.status = error.response;
-      element.ok = "error";
-      return element;
+        elem.status = 404;
+        elem.ok = "error";
+      return elem;
     })
+    );
+
+    return Promise.all(arrayFinal)
 }
 /*
 |--------------------------------------------------------------------------

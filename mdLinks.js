@@ -13,9 +13,7 @@ const mdLinks =  (path,option) =>{
               const contenidoArchivo = main.leerArchivo(rutaValida);
               const  arrayLinks = main.arrayLinks(contenidoArchivo,rutaValida)
                 if(option && option.validate === true){
-                    arrayFinal = arrayLinks.map((element) =>main.axiosProm(element));
-                  Promise.all(arrayFinal)
-                    .then((updatedLinks) => {
+                    main.axiosProm(arrayLinks).then((updatedLinks) => {
                       resolve(updatedLinks);
                     })
                     .catch(err =>{
@@ -36,22 +34,18 @@ const mdLinks =  (path,option) =>{
                         const linksArchivo = main.recorreArray(rutaValida,arrayArchivos, arrayArchivos.length-1,[]).map((element) =>main.arrayLinks(element,rutaValida) );
                       
                         if(option && option.validate === true){
-                          arrayFinalArchivo = linksArchivo.map(element =>{
-                            return element.map(item =>main.axiosProm(item));
-                          });
-                          arrayFinalArchivo.forEach(element => {
-                            Promise.all(element)
-                            .then((updatedLinks) => {
-                              resolve(updatedLinks);
-                            })
-                            .catch(err =>{
-                              reject(pc.red("MSG: "+err));
-                            })
-                          });
+
+                            arrayFinalArchivo = linksArchivo.map(element =>{
+                              return main.axiosProm(element).then((updatedLinks) => {
+                                resolve(updatedLinks);
+                              }).catch(err =>{
+                                    reject(pc.red("MSG: "+err));
+                                  });
+                            });
                         
-                      }else {
-                        resolve(linksArchivo);
-                      }
+                        }else {
+                          resolve(linksArchivo);
+                        }
                       
                     }                 
                   } catch  {
