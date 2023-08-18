@@ -1,20 +1,82 @@
-const { program } = require('commander');
-// const mdLinks = require('./mdLinks');
-// const main = require('./main');
+const {  program   } = require('commander');
+const mdLinks = require('./mdLinks');
+const main = require('./main');
 // const pc = require('picocolors');
 
 const route = process.argv[2];
+
 program
-  .version('0.0.1')
-  .option('-v, --validate', 'valida http.')
-  .option('-s, --stats', 'estadisticas de los links: total y unique.')
-  .option('-v -s , --validate --stats', 'estadisticas de los links: total, unique y broken.')
-  .option('-s -v , --stats --validate', 'estadisticas de los links: total, unique y broken.')
-  .parse(process.argv);
+  .name('Md Links CLI')
+  .description('Md Links lee un archivo .md y muestra en un array los links encontrados.')
+  .version('0.1');
+
+program
+  .option('-vl, --validate', 'muestra la validacion HTTP de cada link encontrado.')
+  .option('-s, --stats', 'muestra el conteo total y los links unicos.')
+  .option('-vl -s, --validate --stats', 'muestra el conteo del total, los links unicos y los links invalidos.')
+  .option('-s -vl, --stats --validate', 'muestra el conteo del total, los links unicos y los links invalidos.')
+program.parse(process.argv);
 
 const options = program.opts();
 
-if (options.stats) {console.log(route) }
+/*
+|--------------------------------------------------------------------------
+    solo recibe PATH 
+|--------------------------------------------------------------------------
+*/
+if (!options.validate && !options.stats) {
+  mdLinks(route, { validate: false })
+  .then(links => {
+      console.log(links);
+      // => [{ href, text, file }, ...]
+    })
+    .catch(err => { console.log(err) });
+}
+
+/*
+|--------------------------------------------------------------------------
+    recibe PATH y --validate
+|--------------------------------------------------------------------------
+*/
+if (!!options.validate && !options.stats) {
+  mdLinks(route, { validate: true })
+  .then(links => {
+      console.log(links);
+      // => [{ href, text, file }, ...]
+    })
+    .catch(err => { console.log(err) });
+}
+
+/*
+|--------------------------------------------------------------------------
+    recibe PATH y --stats
+|--------------------------------------------------------------------------
+*/
+if (!options.validate && !!options.stats) {
+  mdLinks(route, { validate: false })
+  .then(links => {
+      const conteo = main.obtieneStats(links);
+      console.log(conteo);
+      // => [{ href, text, file }, ...]
+    })
+    .catch(err => { console.log(err) });
+}
+
+/*
+|--------------------------------------------------------------------------
+     recibe PATH, --validate y --stats
+|--------------------------------------------------------------------------
+*/
+if (!!options.validate && !!options.stats) {
+  mdLinks(route, { validate: true })
+  .then(links => {
+      const conteo = main.obtieneValidateStats(links);
+      console.log(conteo);
+      // => [{ href, text, file }, ...]
+    })
+    .catch(err => { console.log(err) });
+}
+
 
 
 
