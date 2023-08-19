@@ -1,7 +1,12 @@
 const path = require('path');
 const fs = require('fs');
 const main = require('../main');
+const axios = require('axios').default;
+const mockaxios = require('./mockAxios')
 
+const mock = {
+  get: jest.fn(),
+};
 /*
 |--------------------------------------------------------------------------
     valida que la ruta exista
@@ -123,18 +128,12 @@ describe('leerArchivo', () => {
 */
 describe('axiosProm', () => {
   it('deberia de validar via http los liks.', () => {
-    const mockResponse = [
-      { href: 'https://nodejs.org/', text: 'Node.js', file: 'test\\test-links1\\MK1.md', status: 200, ok: 'OK' },
-    ];
-
-    axios.get.mockImplementation(() => Promise.resolve(mockResponse));
-    const result = main.axiosProm(arrayLinks);
-  
-    
-      expect(response.data).toEqual(mockResponse.data);
-    
-  });
-
+    mock.get.mockImplementationOnce(() => Promise.resolve({ status: 200, ok: 'OK' }));
+    main.axiosProm(mockaxios.arrMock).then((updatedLinks) => {
+        expect(updatedLinks).toEqual(mockaxios.arrMockVal);
+      });
+ });
+});
 /*
 |--------------------------------------------------------------------------
     recorre directorio de manera recursiva
@@ -155,4 +154,15 @@ describe('recorreArray', () => {
 
   // });
 
+});
+/*
+|--------------------------------------------------------------------------
+   conteo de links totales y unicos
+|--------------------------------------------------------------------------
+*/
+describe('recorreArray', () => {
+  it('deberia realizar conteo de links.', () => {
+    const result = main.obtieneStats(mockaxios.arrMock);
+    expect(result).toStrictEqual(mockaxios.conteo);
+  });
 });
