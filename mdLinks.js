@@ -2,7 +2,7 @@
 const main = require('./main');
 const pc = require('picocolors');
 
-let arrayFinal, arrayFinalArchivo;
+let arrayFinalArchivo;
 
 const mdLinks =  (path,option) =>{
     return new Promise((resolve,reject)=>{
@@ -25,14 +25,12 @@ const mdLinks =  (path,option) =>{
                 }
 
             }else{
-                try{
-                    const data = main.buscarArchivo(rutaValida);
-                    const arrayArchivos = data.filter(word => main.archivoMD(word));
-                    if (arrayArchivos.length === 0) { 
+               try{
+                    const data = main.buscarArchivo(rutaValida,[]);
+                    if (data.length === 0) { 
                         reject(pc.red("MSG: No exiten archivos compatibles."));
                     }else{
-                        const linksArchivo = main.recorreArray(rutaValida,arrayArchivos, arrayArchivos.length-1,[]).map((element) =>main.arrayLinks(element,rutaValida) );
-                      
+                         const linksArchivo = main.recorreArray(data, data.length-1,[]).map((element,i) =>main.arrayLinks(element,data[i]) );
                         if(option && option.validate === true){
 
                             arrayFinalArchivo = linksArchivo.map(element =>{
@@ -46,10 +44,10 @@ const mdLinks =  (path,option) =>{
                         }else {
                           resolve(linksArchivo);
                         }
-                      
+                      console.log(linksArchivo)
                     }                 
-                  } catch  {
-                    reject(pc.red('MSG: No corresponde a un archivo válido')); 
+                  } catch (err) {
+                    reject(pc.red('MSG:' + err)); 
                   }      
             } 
         }else{
@@ -58,10 +56,3 @@ const mdLinks =  (path,option) =>{
     })
 }
 module.exports =mdLinks;
-
-
-
-      //DEV008-card-validation
-      //DEV008-data-lovers
-      //DEV008-md-links
-      //, { validate: true }

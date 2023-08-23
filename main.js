@@ -3,6 +3,7 @@ const fs = require('fs');
 const axios = require('axios').default;
 const pc = require('picocolors');
 
+
 const regex = /(?=\[(!\[.+?\]\(.+?\)|.+?)]\(((?:https?|ftp|file):\/\/[^\)]+)\))/gi;
 /*
 |--------------------------------------------------------------------------
@@ -49,9 +50,21 @@ function archivoMD (dirname){
     recorrer directorio 
 |--------------------------------------------------------------------------
 */
-function buscarArchivo (dirname){
-    return (fs.readdirSync(dirname));
+function buscarArchivo (dirname,filesInDir){
+    let stats = fs.statSync(dirname);
+    if (stats.isFile()) {
+        if (archivoMD(dirname)) {
+          filesInDir.push(dirname)
+        }
+        return 
+      }
+        let filenames = fs.readdirSync(dirname);
+        filenames.forEach((file) => {
+            buscarArchivo(dirname + '/' + file,filesInDir)
+        })
+    return filesInDir 
 }
+     
 
 /*
 |--------------------------------------------------------------------------
@@ -97,14 +110,14 @@ function axiosProm(arrayLin){
     recorre directorio de manera recursiva
 |--------------------------------------------------------------------------
 */
-  function recorreArray(rutaValida,arrayArchivos,n,resultado){
-    //console.trace(array[n]);
-    if (n===0){
-        resultado.push(resultado+(leerArchivo(rutaValida+'\\'+ arrayArchivos[n])))  
+  function recorreArray(arrayArchivos,n,resultado){
+    //console.trace(arrayArchivos[n]);
+    if(n===0){
+        resultado.push(resultado+(leerArchivo(arrayArchivos[n])))  
         return resultado;
-    } else {
-        resultado.push(resultado+(leerArchivo(rutaValida+'\\'+ arrayArchivos[n])))  
-        return recorreArray(rutaValida,arrayArchivos,n-1,resultado);
+    }else{
+        resultado.push(resultado+(leerArchivo(arrayArchivos[n])))  
+        return recorreArray(arrayArchivos,n-1,resultado);
     }
 }
 
@@ -118,8 +131,8 @@ function obtieneStats (arrayLinks){
     // Set permite almacenar valores únicos de cualquier tipo
     const uniqueLinks = [...new Set(arrayLinks.map((link) => link.href))];
     const statsLinks = `
-    Total: ${pc.green(totalLinks)} 
-    Uniques: ${pc.blue(uniqueLinks.length)}`;
+  Total: ${totalLinks}
+  Uniques: ${uniqueLinks.length}`;
 
     return statsLinks;
 }
@@ -134,12 +147,13 @@ function obtieneValidateStats (arrayLinks){
     const uniqueLinks = [...new Set(arrayLinks.map((link) => link.href))];
     const oks = arrayLinks.filter((word) => word.ok !== 'OK');
     const statsLinks = `
-    Total: ${pc.green(totalLinks)} 
-    Uniques: ${pc.blue(uniqueLinks.length)}
-    Broken: ${pc.red(oks.length)}`;
+  Total: ${totalLinks}
+  Uniques: ${uniqueLinks.length}
+  Broken: ${oks.length}`;
 
     return statsLinks;
 }
+
 
 
 module.exports = { validarPath,
