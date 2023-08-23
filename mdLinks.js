@@ -44,7 +44,6 @@ const mdLinks =  (path,option) =>{
                         }else {
                           resolve(linksArchivo);
                         }
-                      console.log(linksArchivo)
                     }                 
                   } catch (err) {
                     reject(pc.red('MSG:' + err)); 

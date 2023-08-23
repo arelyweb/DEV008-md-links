@@ -27,8 +27,9 @@ const options = program.opts();
 if (!options.validate && !options.stats) {
   mdLinks(route, { validate: false })
   .then(links => {
-      console.log(links);
-      // => [{ href, text, file }, ...]
+      links.forEach((element, i) => {
+        console.log(element[i].file+ " " +element[i].href + " " + element[i].text)
+      });
     })
     .catch(err => { console.log(err) });
 }
@@ -41,8 +42,9 @@ if (!options.validate && !options.stats) {
 if (!!options.validate && !options.stats) {
   mdLinks(route, { validate: true })
   .then(links => {
-      console.log(links);
-      // => [{ href, text, file }, ...]
+    links.forEach((element, i) => {
+      console.log(element.file+ " " +element.href + " " + element.ok + " " + element.status + " " + element.text)
+    });
     })
     .catch(err => { console.log(err) });
 }
