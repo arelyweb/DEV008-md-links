@@ -28,7 +28,7 @@ if (!options.validate && !options.stats) {
   mdLinks(route, { validate: false })
   .then(links => {
       links.forEach((element, i) => {
-        console.log(element[i].file+ " " +element[i].href + " " + element[i].text)
+        console.log(element.file+ " " +element.href + " " + element.text)
       });
     })
     .catch(err => { console.log(err) });

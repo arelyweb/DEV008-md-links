@@ -31,18 +31,19 @@ const mdLinks =  (path,option) =>{
                         reject(pc.red("MSG: No exiten archivos compatibles."));
                     }else{
                          const linksArchivo = main.recorreArray(data, data.length-1,[]).map((element,i) =>main.arrayLinks(element,data[i]) );
-                        if(option && option.validate === true){
+
+                             if(option && option.validate === true){
 
                             arrayFinalArchivo = linksArchivo.map(element =>{
                               return main.axiosProm(element).then((updatedLinks) => {
-                                resolve(updatedLinks);
+                                resolve(updatedLinks.flat());
                               }).catch(err =>{
                                     reject(pc.red("MSG: "+err));
                                   });
                             });
                         
                         }else {
-                          resolve(linksArchivo);
+                          resolve(linksArchivo.flat());
                         }
                     }                 
                   } catch (err) {
