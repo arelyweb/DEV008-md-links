@@ -42,7 +42,7 @@ if (!options.validate && !options.stats) {
 if (!!options.validate && !options.stats) {
   mdLinks(route, { validate: true })
   .then(links => {
-    links.forEach((element, i) => {
+    links.forEach((element) => {
       console.log(element.file+ " " +element.href + " " + element.ok + " " + element.status + " " + element.text)
     });
     })

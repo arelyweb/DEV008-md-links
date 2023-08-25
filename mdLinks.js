@@ -26,25 +26,28 @@ const mdLinks =  (path,option) =>{
 
             }else{
                try{
+                  const prueba = []
                     const data = main.buscarArchivo(rutaValida,[]);
                     if (data.length === 0) { 
                         reject(pc.red("MSG: No exiten archivos compatibles."));
                     }else{
-                         const linksArchivo = main.recorreArray(data, data.length-1,[]).map((element,i) =>main.arrayLinks(element,data[i]) );
-
-                             if(option && option.validate === true){
-
-                            arrayFinalArchivo = linksArchivo.map(element =>{
-                              return main.axiosProm(element).then((updatedLinks) => {
-                                resolve(updatedLinks.flat());
+                          main.recorreArray(data, data.length-1,[])
+                          .forEach(element => {
+                            prueba.push(main.arrayLinks(element.contenido,element.ruta)) 
+                          });
+                            if(option && option.validate === true){
+                          
+                              main.axiosProm(prueba.flat()).then((updatedLinks) => {
+                               resolve(updatedLinks);
+                                //console.log(updatedLinks)
                               }).catch(err =>{
                                     reject(pc.red("MSG: "+err));
                                   });
-                            });
+                            
                         
-                        }else {
-                          resolve(linksArchivo.flat());
-                        }
+                            }else {
+                              resolve(prueba.flat());
+                            }
                     }                 
                   } catch (err) {
                     reject(pc.red('MSG:' + err)); 
