@@ -1,7 +1,12 @@
 const path = require('path');
 const fs = require('fs');
 const main = require('../main');
+const axios = require('axios').default;
+const mockaxios = require('./mockAxios')
 
+const mock = {
+  get: jest.fn(),
+};
 /*
 |--------------------------------------------------------------------------
     valida que la ruta exista
@@ -73,14 +78,13 @@ describe('archivoMD', () => {
 */
 describe('buscarArchivo', () => {
   it('deberia retornar un array de archivos dentro del directorio.', () => {
-    const Path = 'test\\test-links2';
-    const archivos = ['MK2.md', 'MK3.md'];
- 
-    jest.spyOn(fs, 'readdirSync').mockReturnValue(archivos);
-    const result = main.buscarArchivo(Path);
+    const Path = '..\\DEV008-md-links\\test\\test-links2';
+    const archivos = ['..\\DEV008-md-links\\test\\test-links2/MK2.md', '..\\DEV008-md-links\\test\\test-links2/MK3.md'];
+    
+    const result = main.buscarArchivo(Path,[]);
 
     expect(result).toStrictEqual(archivos);
-    fs.readdirSync.mockRestore();
+
   });
 });
 /*
@@ -90,8 +94,9 @@ describe('buscarArchivo', () => {
 */
 describe('leerArchivo', () => {
   it('deberia de leer el contenido del archivo.', () => {
-    const Path = 'test\\test-links1\\MK1.md';
-    const archivoContenido = '###Contendio del archivo .md';
+    const Path = '..\\DEV008-md-links\\test\\MK1.md';
+    const archivoContenido =` ## 1. Preámbulo
+    Dentro de una comunidad de código abi`;
     jest.spyOn(fs, 'readFileSync').mockReturnValue(
       archivoContenido
     );
@@ -118,22 +123,53 @@ describe('leerArchivo', () => {
 });
 /*
 |--------------------------------------------------------------------------
+    axios
+|--------------------------------------------------------------------------
+*/
+describe('axiosProm', () => {
+  it('deberia de validar via http los liks.', () => {
+    mock.get.mockImplementationOnce(() => Promise.resolve({ status: 200, ok: 'OK' }));
+    main.axiosProm(mockaxios.arrMock).then((updatedLinks) => {
+        expect(updatedLinks).toEqual(mockaxios.arrMockVal);
+      });
+ });
+});
+/*
+|--------------------------------------------------------------------------
     recorre directorio de manera recursiva
 |--------------------------------------------------------------------------
 */
 describe('recorreArray', () => {
   it('deberia recorrer el array de archivos .md del dorectorio de forma recursiva.', () => {
     jest.resetAllMocks();
-
-    const Path = 'test\\test-links2\\';
-    const archivos = ['MK2.md', 'MK3.md'];
+    const archivos = ['..\\DEV008-md-links\\test\\test-links2/MK2.md', '..\\DEV008-md-links\\test\\test-links2/MK3.md'];
     
-    jest.spyOn(fs, 'readdirSync').mockReturnValue(archivos);
+    const result = main.recorreArray(archivos, archivos.length-1,[]);
 
-    const result = main.recorreArray(Path,archivos, archivos.length-1,[])
-    console.log(result)
-    //expect(result).toEqual(archivos);
+    expect(result).toEqual(mockaxios.arrMockRecorre);
 
   });
 
+});
+/*
+|--------------------------------------------------------------------------
+   conteo de links totales y unicos
+|--------------------------------------------------------------------------
+*/
+describe('obtieneStats', () => {
+  it('deberia realizar conteo del total de links y unicos.', () => {
+    const result = main.obtieneStats(mockaxios.arrMock);
+    expect(result).toStrictEqual(mockaxios.conteo);
+  });
+});
+/*
+|--------------------------------------------------------------------------
+   conteo de links totales,unicos y rotos
+|--------------------------------------------------------------------------
+*/
+describe('obtieneValidateStats', () => {
+  it('deberia realizar conteo del total de links, unicos y rotos', () => {
+    const result = main.obtieneValidateStats(mockaxios.arrMock);
+    expect(result).toStrictEqual(mockaxios.conteoB);
+  });
 });

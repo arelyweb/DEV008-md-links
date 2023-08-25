@@ -1,6 +1,7 @@
 {
-  "name": "md-links",
-  "version": "0.1.0",
+  "name": "@arelyweb/md-links",
+  "version": "0.1.2",
+  "description": "Recorre un archivo .md y obtiene los links, en caso de ser solicitado se valida cada link y genera estadisticas.",
   "engines": {
     "node": ">=16.x"
   },
@@ -23,5 +24,7 @@
     "picocolors": "^1.0.0",
     "request": "^2.88.2",
     "url": "^0.11.1"
-  }
+  },
+  "keywords": ["javascript","nodeJS"],
+  "author": "Arely Gonzalez"
 }

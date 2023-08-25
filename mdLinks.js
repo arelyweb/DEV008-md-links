@@ -2,7 +2,7 @@
 const main = require('./main');
 const pc = require('picocolors');
 
-let arrayFinal, arrayFinalArchivo;
+let arrayFinalArchivo;
 
 const mdLinks =  (path,option) =>{
     return new Promise((resolve,reject)=>{
@@ -13,9 +13,7 @@ const mdLinks =  (path,option) =>{
               const contenidoArchivo = main.leerArchivo(rutaValida);
               const  arrayLinks = main.arrayLinks(contenidoArchivo,rutaValida)
                 if(option && option.validate === true){
-                    arrayFinal = arrayLinks.map((element) =>main.axiosProm(element));
-                  Promise.all(arrayFinal)
-                    .then((updatedLinks) => {
+                    main.axiosProm(arrayLinks).then((updatedLinks) => {
                       resolve(updatedLinks);
                     })
                     .catch(err =>{
@@ -27,35 +25,32 @@ const mdLinks =  (path,option) =>{
                 }
 
             }else{
-                try{
-                    const data = main.buscarArchivo(rutaValida);
-                    const arrayArchivos = data.filter(word => main.archivoMD(word));
-                    if (arrayArchivos.length === 0) { 
+               try{
+                  const prueba = []
+                    const data = main.buscarArchivo(rutaValida,[]);
+                    if (data.length === 0) { 
                         reject(pc.red("MSG: No exiten archivos compatibles."));
                     }else{
-                        const linksArchivo = main.recorreArray(rutaValida,arrayArchivos, arrayArchivos.length-1,[]).map((element) =>main.arrayLinks(element,rutaValida) );
-                      
-                        if(option && option.validate === true){
-                          arrayFinalArchivo = linksArchivo.map(element =>{
-                            return element.map(item =>main.axiosProm(item));
+                          main.recorreArray(data, data.length-1,[])
+                          .forEach(element => {
+                            prueba.push(main.arrayLinks(element.contenido,element.ruta)) 
                           });
-                          arrayFinalArchivo.forEach(element => {
-                            Promise.all(element)
-                            .then((updatedLinks) => {
-                              resolve(updatedLinks);
-                            })
-                            .catch(err =>{
-                              reject(pc.red("MSG: "+err));
-                            })
-                          });
+                            if(option && option.validate === true){
+                          
+                              main.axiosProm(prueba.flat()).then((updatedLinks) => {
+                               resolve(updatedLinks);
+                                //console.log(updatedLinks)
+                              }).catch(err =>{
+                                    reject(pc.red("MSG: "+err));
+                                  });
+                            
                         
-                      }else {
-                        resolve(linksArchivo);
-                      }
-                      
+                            }else {
+                              resolve(prueba.flat());
+                            }
                     }                 
-                  } catch  {
-                    reject(pc.red('MSG: No corresponde a un archivo válido')); 
+                  } catch (err) {
+                    reject(pc.red('MSG:' + err)); 
                   }      
             } 
         }else{
@@ -64,10 +59,3 @@ const mdLinks =  (path,option) =>{
     })
 }
 module.exports =mdLinks;
-
-
-
-      //DEV008-card-validation
-      //DEV008-data-lovers
-      //DEV008-md-links
-      //, { validate: true }

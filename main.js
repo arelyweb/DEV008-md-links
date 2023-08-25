@@ -3,6 +3,7 @@ const fs = require('fs');
 const axios = require('axios').default;
 const pc = require('picocolors');
 
+
 const regex = /(?=\[(!\[.+?\]\(.+?\)|.+?)]\(((?:https?|ftp|file):\/\/[^\)]+)\))/gi;
 /*
 |--------------------------------------------------------------------------
@@ -49,9 +50,21 @@ function archivoMD (dirname){
     recorrer directorio 
 |--------------------------------------------------------------------------
 */
-function buscarArchivo (dirname){
-    return (fs.readdirSync(dirname));
+function buscarArchivo (dirname,filesInDir){
+    let stats = fs.statSync(dirname);
+    if (stats.isFile()) {
+        if (archivoMD(dirname)) {
+          filesInDir.push(dirname)
+        }
+        return 
+      }
+        let filenames = fs.readdirSync(dirname);
+        filenames.forEach((file) => {
+            buscarArchivo(dirname + '\\' + file,filesInDir)
+        })
+    return filesInDir 
 }
+     
 
 /*
 |--------------------------------------------------------------------------
@@ -68,39 +81,51 @@ function leerArchivo (file){
 */
 function arrayLinks (stringArchivo,rutaValida){
  return [...stringArchivo.matchAll(regex)].map((m) => ({ href: m[2],text: m[1], file: rutaValida}))
-  }
+}
   /*
 |--------------------------------------------------------------------------
     axios
 |--------------------------------------------------------------------------
 */
-function axiosProm(element){
-    return axios
-    .get(element.href)
-    .then((response) => {
-      element.status = response.status;
-      element.ok = response.statusText;
-      return element;
-    })
-    .catch((error) => {
-      element.status = error.response;
-      element.ok = "error";
-      return element;
-    })
+function axiosProm(arrayLin){
+
+    const arrayFinal = arrayLin.map((elem) =>
+   axios
+   .get(elem.href)
+   .then((response) => {
+       elem.status = response.status;
+       elem.ok = response.statusText;
+     return elem;
+   })
+   .catch((error) => {
+       elem.status = 404;
+       elem.ok = "error";
+     return elem;
+   })
+    );
+
+   return Promise.all(arrayFinal)
 }
+
 /*
 |--------------------------------------------------------------------------
     recorre directorio de manera recursiva
 |--------------------------------------------------------------------------
 */
-  function recorreArray(rutaValida,arrayArchivos,n,resultado){
-    //console.trace(array[n]);
-    if (n===0){
-        resultado.push(resultado+(leerArchivo(rutaValida+'\\'+ arrayArchivos[n])))  
-        return resultado;
-    } else {
-        resultado.push(resultado+(leerArchivo(rutaValida+'\\'+ arrayArchivos[n])))  
-        return recorreArray(rutaValida,arrayArchivos,n-1,resultado);
+
+  function recorreArray(arrayArchivos,n,resultado){
+    //console.trace(arrayArchivos[n]);
+    var link = {ruta: "", contenido: ""};
+    if(n===0){
+        link.ruta = arrayArchivos[n];
+        link.contenido = leerArchivo(arrayArchivos[n]);
+        resultado.push(link);
+        return resultado
+    }else{
+        link.ruta = arrayArchivos[n];
+        link.contenido = leerArchivo(arrayArchivos[n]);
+        resultado.push(link);
+        return recorreArray(arrayArchivos,n-1,resultado);
     }
 }
 
@@ -114,8 +139,8 @@ function obtieneStats (arrayLinks){
     // Set permite almacenar valores únicos de cualquier tipo
     const uniqueLinks = [...new Set(arrayLinks.map((link) => link.href))];
     const statsLinks = `
-    Total: ${pc.green(totalLinks)} 
-    Uniques: ${pc.blue(uniqueLinks.length)}`;
+  Total: ${totalLinks}
+  Uniques: ${uniqueLinks.length}`;
 
     return statsLinks;
 }
@@ -130,12 +155,13 @@ function obtieneValidateStats (arrayLinks){
     const uniqueLinks = [...new Set(arrayLinks.map((link) => link.href))];
     const oks = arrayLinks.filter((word) => word.ok !== 'OK');
     const statsLinks = `
-    Total: ${pc.green(totalLinks)} 
-    Uniques: ${pc.blue(uniqueLinks.length)}
-    Broken: ${pc.red(oks.length)}`;
+  Total: ${totalLinks}
+  Uniques: ${uniqueLinks.length}
+  Broken: ${oks.length}`;
 
     return statsLinks;
 }
+
 
 
 module.exports = { validarPath,
