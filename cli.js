@@ -1,4 +1,4 @@
-const {  program   } = require('commander');
+const { program } = require('commander');
 const mdLinks = require('./mdLinks');
 const main = require('./main');
 // const pc = require('picocolors');

@@ -12,7 +12,7 @@
   },
   "scripts": {
     "test": "jest --coverage",
-    "start": "node ./cli.js"
+    "start": "node cli.js"
   },
   "devDependencies": {
     "jest": "^29.6.2"
@@ -25,6 +25,9 @@
     "request": "^2.88.2",
     "url": "^0.11.1"
   },
-  "keywords": ["javascript","nodeJS"],
+  "keywords": [
+    "javascript",
+    "nodeJS"
+  ],
   "author": "Arely Gonzalez"
 }

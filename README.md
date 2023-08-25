@@ -4,8 +4,8 @@
 
 * [1. Preámbulo](#1-preámbulo)
 * [2. Resumen del proyecto](#2-resumen-del-proyecto)
-* [3. Intalación de libería](#3-instalacion-de-la-libreria)
-* [4. Uso de la librería](#4-consideraciones-generales)
+* [3. Intalación de libería](#3-intalación-de-librería)
+* [4. Uso de la librería](#4-uso-de-la-librería)
 
 ***
 
@@ -44,7 +44,7 @@ npm install @arelyweb/md-links@0.1.2
 - Desde package.json:
 
 ```sh
-"@arelyweb/md-links": "0.1.0"
+"@arelyweb/md-links": "0.1.2"
 ```
 
 ## 4. Uso de la librería
