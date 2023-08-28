@@ -1,7 +1,11 @@
 {
-  "name": "@arelyweb/md-links",
+  "name": "arrely.web-md-links",
   "version": "0.1.2",
   "description": "Recorre un archivo .md y obtiene los links, en caso de ser solicitado se valida cada link y genera estadisticas.",
+  "main": "mdLinks.js",
+  "script": {
+    "cli": "cli.js"
+  },
   "engines": {
     "node": ">=16.x"
   },
@@ -29,5 +33,14 @@
     "javascript",
     "nodeJS"
   ],
-  "author": "Arely Gonzalez"
+  "author": "Arely Gonzalez",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "license": "ISC"
 }

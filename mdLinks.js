@@ -26,18 +26,18 @@ const mdLinks =  (path,option) =>{
 
             }else{
                try{
-                  const prueba = []
+                  const arrayFinal = []
                     const data = main.buscarArchivo(rutaValida,[]);
                     if (data.length === 0) { 
                         reject(pc.red("MSG: No exiten archivos compatibles."));
                     }else{
                           main.recorreArray(data, data.length-1,[])
                           .forEach(element => {
-                            prueba.push(main.arrayLinks(element.contenido,element.ruta)) 
+                            arrayFinal.push(main.arrayLinks(element.contenido,element.ruta)) 
                           });
                             if(option && option.validate === true){
                           
-                              main.axiosProm(prueba.flat()).then((updatedLinks) => {
+                              main.axiosProm(arrayFinal.flat()).then((updatedLinks) => {
                                resolve(updatedLinks);
                                 //console.log(updatedLinks)
                               }).catch(err =>{
@@ -46,7 +46,7 @@ const mdLinks =  (path,option) =>{
                             
                         
                             }else {
-                              resolve(prueba.flat());
+                              resolve(arrayFinal.flat());
                             }
                     }                 
                   } catch (err) {

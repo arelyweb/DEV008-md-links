@@ -39,12 +39,7 @@ Para la instalación de la librería se deberá ejecutar el suguiente comando:
 - Desde consola
 
 ```sh
-npm install @arelyweb/md-links@0.1.2
-```
-- Desde package.json:
-
-```sh
-"@arelyweb/md-links": "0.1.2"
+npm i arrely.web-md-links
 ```
 
 ## 4. Uso de la librería

@@ -1,7 +1,6 @@
 const path = require('path');
 const fs = require('fs');
 const main = require('../main');
-const axios = require('axios').default;
 const mockaxios = require('./mockAxios')
 
 const mock = {
@@ -79,10 +78,10 @@ describe('archivoMD', () => {
 describe('buscarArchivo', () => {
   it('deberia retornar un array de archivos dentro del directorio.', () => {
     const Path = '..\\DEV008-md-links\\test\\test-links2';
-    const archivos = ['..\\DEV008-md-links\\test\\test-links2/MK2.md', '..\\DEV008-md-links\\test\\test-links2/MK3.md'];
     
     const result = main.buscarArchivo(Path,[]);
-
+    
+    const archivos = ['..\\DEV008-md-links\\test\\test-links2\\MK2.md', '..\\DEV008-md-links\\test\\test-links2\\MK3.md'];
     expect(result).toStrictEqual(archivos);
 
   });
@@ -142,7 +141,7 @@ describe('axiosProm', () => {
 describe('recorreArray', () => {
   it('deberia recorrer el array de archivos .md del dorectorio de forma recursiva.', () => {
     jest.resetAllMocks();
-    const archivos = ['..\\DEV008-md-links\\test\\test-links2/MK2.md', '..\\DEV008-md-links\\test\\test-links2/MK3.md'];
+    const archivos = ['..\\DEV008-md-links\\test\\test-links2\\MK2.md', '..\\DEV008-md-links\\test\\test-links2\\MK3.md'];
     
     const result = main.recorreArray(archivos, archivos.length-1,[]);
 
